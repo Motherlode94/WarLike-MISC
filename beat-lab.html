@@ -10,6 +10,7 @@
 <label for="key">Tonalité</label><select id="key"></select>
 <label for="scale">Gamme</label><select id="scale"><option value="minor">Mineure</option><option value="major">Majeure</option></select>
 </div><div class="row" style="margin-top:15px"><button id="play" class="primary">▶ Lecture</button><button id="stop">■ Stop</button><button id="clear">Effacer le pattern</button><button id="example">Charger une démo</button><button id="export">Exporter MIDI (.mid)</button></div><p class="status" id="status" role="status" aria-live="polite">Prêt. Active des cases ou charge la démo.</p><div class="row"><strong class="beat view" id="position">01 / 16</strong><span class="help">Mesure 4/4 · doubles croches · boucle de 1 mesure</span></div></section>
+<section class="panel"><h2>Atelier mélodique · Dark & Atmosphere</h2><p>Compose des mélodies originales avec motifs récurrents, notes de passage, sauts d'octave et variations harmoniques. Aucun morceau existant n'est reproduit.</p><div class="row"><label for="mood">Ambiance</label><select id="mood"><option value="dark">Sombre & hypnotique</option><option value="ethereal">Éthérée</option><option value="emotional">Mélancolique</option><option value="aggressive">Tension / énergie</option></select><label for="density">Densité</label><select id="density"><option value="sparse">Aérée</option><option value="balanced" selected>Équilibrée</option><option value="busy">Rapide</option></select><label for="octave">Registre lead</label><select id="octave"><option value="-12">Grave −12</option><option value="0" selected>Normal</option><option value="12">Aigu +12</option></select></div><div class="row" style="margin-top:14px"><button id="generate-melody" class="primary">✦ Générer une mélodie</button><button id="vary-melody">Créer une variation</button><button id="preview-lead">Écouter seulement le lead</button><label for="echo">Écho</label><input id="echo" type="range" min="0" max="60" value="20" aria-label="Intensité de l'écho"></div><p id="melody-status" class="status" role="status" aria-live="polite">Choisis une ambiance, puis génère une mélodie.</p><p class="help">Les huit hauteurs disponibles sur le séquenceur restent éditables case par case. L'export MIDI respecte le registre du lead, mais pas l'écho audio.</p></section>
 <section class="panel"><h2>Séquenceur</h2><p>Chaque colonne représente une double croche. Clique sur une case pour l'activer. Les pistes mélodiques utilisent des degrés de la gamme sélectionnée.</p><div class="stepscroll" id="sequence" role="group" aria-label="Séquenceur à 16 pas"></div><div class="palette"><span class="pill">1–4 : temps</span><span class="pill">5–8 : subdivisions</span><span class="pill">9–12 : variations</span><span class="pill">13–16 : fin de mesure</span></div></section>
 <section class="panel"><h2>Mixage des pistes</h2><div id="mixer" class="mixer"></div><p class="help">Pistes synthétisées localement avec Web Audio. Les changements de volume n'affectent pas la vélocité MIDI exportée.</p></section>
 <div class="bottom"><section class="panel"><h2>Exercice conseillé</h2><p><strong>Construire un groove en 4 étapes</strong></p><ol><li>Place la grosse caisse sur les pas 1 et 9.</li><li>Place la caisse claire sur les pas 5 et 13.</li><li>Ajoute une charleston sur les pas impairs.</li><li>Compose ensuite une basse et une mélodie.</li></ol><p class="help">Teste le tempo à 80, 110 puis 140 BPM et écoute la différence.</p></section>
@@ -26,13 +27,13 @@ const instruments=[
 {name:'Chord',type:'chord',channel:1,gm:89,velocity:82},
 {name:'Lead',type:'lead',channel:2,gm:81,velocity:96}
 ],steps=16;
-const fresh=()=>({title:'Mon premier beat',bpm:110,key:0,scale:'minor',grid:instruments.map(()=>Array(steps).fill(0)),vol:instruments.map(()=>.75),mute:instruments.map(()=>false)});
+const fresh=()=>({title:'Mon premier beat',bpm:110,key:0,scale:'minor',grid:instruments.map(()=>Array(steps).fill(0)),octave:0,echo:20,vol:instruments.map(()=>.75),mute:instruments.map(()=>false)});
 let state=fresh();
-try{const raw=JSON.parse(localStorage.getItem('warlike-misc-beatlab-v1'));if(raw&&Array.isArray(raw.grid)&&raw.grid.length===instruments.length&&raw.grid.every(row=>Array.isArray(row)&&row.length===steps&&row.every(n=>Number.isInteger(n)&&n>=0&&n<=7))){state.title=String(raw.title||state.title).slice(0,60);state.bpm=Math.max(50,Math.min(220,Number(raw.bpm)||110));state.key=Number.isInteger(raw.key)?((raw.key%12)+12)%12:0;state.scale=raw.scale==='major'?'major':'minor';state.grid=raw.grid;state.vol=Array.isArray(raw.vol)&&raw.vol.length===instruments.length?raw.vol.map(x=>Math.max(0,Math.min(1,Number(x)||0))):state.vol;state.mute=Array.isArray(raw.mute)&&raw.mute.length===instruments.length?raw.mute.map(Boolean):state.mute}}catch{}
+try{const raw=JSON.parse(localStorage.getItem('warlike-misc-beatlab-v1'));if(raw&&Array.isArray(raw.grid)&&raw.grid.length===instruments.length&&raw.grid.every(row=>Array.isArray(row)&&row.length===steps&&row.every(n=>Number.isInteger(n)&&n>=0&&n<=7))){state.title=String(raw.title||state.title).slice(0,60);state.bpm=Math.max(50,Math.min(220,Number(raw.bpm)||110));state.key=Number.isInteger(raw.key)?((raw.key%12)+12)%12:0;state.scale=raw.scale==='major'?'major':'minor';state.grid=raw.grid;state.octave=[-12,0,12].includes(raw.octave)?raw.octave:0;state.echo=Number.isFinite(raw.echo)?Math.max(0,Math.min(60,raw.echo)):20;state.vol=Array.isArray(raw.vol)&&raw.vol.length===instruments.length?raw.vol.map(x=>Math.max(0,Math.min(1,Number(x)||0))):state.vol;state.mute=Array.isArray(raw.mute)&&raw.mute.length===instruments.length?raw.mute.map(Boolean):state.mute}}catch{}
 function save(){try{localStorage.setItem('warlike-misc-beatlab-v1',JSON.stringify(state));$('#save-status').textContent='Projet sauvegardé localement.'}catch{$('#save-status').textContent='Stockage local indisponible.'}}
 function status(message){$('#status').textContent=message}
-function sync(){const old=document.activeElement;$('#project').value=state.title;$('#tempo').value=state.bpm;$('#key').value=String(state.key);$('#scale').value=state.scale;render()}
-function noteFor(track,value){const intervals=state.scale==='minor'?[0,2,3,5,7,8,10,12]:[0,2,4,5,7,9,11,12];if(track===3)return 36+state.key+intervals[value];if(track===5)return 60+state.key+intervals[value];return 48+state.key+intervals[value]}
+function sync(){const old=document.activeElement;$('#project').value=state.title;$('#tempo').value=state.bpm;$('#key').value=String(state.key);$('#scale').value=state.scale;$('#octave').value=String(state.octave);$('#echo').value=state.echo;render()}
+function noteFor(track,value){const intervals=state.scale==='minor'?[0,2,3,5,7,8,10,12]:[0,2,4,5,7,9,11,12];if(track===3)return 36+state.key+intervals[value];if(track===5)return 60+state.key+intervals[value]+state.octave;return 48+state.key+intervals[value]}
 function midiNotes(track,value){if(track<3)return[instruments[track].gm];if(track!==4)return[noteFor(track,value)];const root=noteFor(track,value),third=state.scale==='minor'?3:4;return[root,root+third,root+7]}
 function eventNotes(track,value){return midiNotes(track,value)}
 for(let k=0;k<12;k++){$('#key').append(new Option(names[k],String(k)))}
@@ -42,11 +43,41 @@ $('#project').oninput=e=>{state.title=e.target.value.slice(0,60);save()};
 $('#tempo').onchange=e=>{state.bpm=Math.max(50,Math.min(220,Number(e.target.value)||110));e.target.value=state.bpm;save()};
 $('#key').onchange=e=>{state.key=Number(e.target.value);render();save()};
 $('#scale').onchange=e=>{state.scale=e.target.value;render();save()};
+$('#octave').onchange=e=>{state.octave=Number(e.target.value);render();save()};
+$('#echo').oninput=e=>{state.echo=Number(e.target.value);save()};
+let motifSeed=1;
+function random(){motifSeed=(Math.imul(motifSeed,1664525)+1013904223)>>>0;return motifSeed/4294967296}
+function generateMelody(vary=false){
+const mood=$('#mood').value,density=$('#density').value;
+motifSeed=(Date.now()>>>0)||1;
+const patterns={
+dark:[0,4,2,1,0,5,3,2],ethereal:[0,2,4,5,4,2,6,5],
+emotional:[4,3,2,0,2,1,0,3],aggressive:[0,6,3,5,0,7,6,4]};
+const motif=patterns[mood].slice();
+const densities={sparse:[0,4,8,12],balanced:[0,2,4,6,8,10,12,14],busy:[0,1,2,4,5,6,8,9,10,12,13,14,15]};
+const onsets=densities[density],old=state.grid[5].slice();
+const generated=Array(steps).fill(0);
+for(const step of onsets){
+const position=Math.floor(step/2)%8;
+let degree=motif[position];
+if(step>=8&&random()<.35)degree=Math.max(0,Math.min(7,degree+(random()<.5?-1:1)));
+if(vary&&old[step]&&random()<.65)degree=Math.max(0,Math.min(7,old[step]-1+(random()<.5?-1:1)));
+generated[step]=degree+1;
+}
+generated[0]=generated[0]||1;
+state.grid[5]=generated;
+if(!vary){const roots={dark:[0,5,3,4],ethereal:[0,3,5,4],emotional:[0,4,5,3],aggressive:[0,6,5,4]}[mood];state.grid[4]=Array(steps).fill(0);state.grid[3]=Array(steps).fill(0);for(let i=0;i<4;i++){state.grid[4][i*4]=roots[i]+1;state.grid[3][i*4]=roots[i]+1}}
+render();save();$('#melody-status').textContent=(vary?'Variation générée':'Mélodie et accompagnement générés')+' · '+mood+' · '+density;
+}
+$('#generate-melody').onclick=()=>generateMelody(false);
+$('#vary-melody').onclick=()=>generateMelody(true);
+$('#preview-lead').onclick=()=>{try{const t=audio().currentTime+.08,dur=60/state.bpm/4;state.grid[5].forEach((value,i)=>{if(value){voice(noteFor(5,value-1),t+i*dur,dur*.88,'triangle',.19)}});$('#melody-status').textContent='Lecture du lead sur une mesure.'}catch(e){$('#melody-status').textContent=e.message}};
+
 let context=null;function audio(){if(!context)context=new(window.AudioContext||window.webkitAudioContext)();if(context.state==='suspended')context.resume();return context}
 function voice(note,t,length,wave,volume){const c=audio(),osc=c.createOscillator(),gain=c.createGain();osc.type=wave;osc.frequency.setValueAtTime(440*Math.pow(2,(note-69)/12),t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+length);osc.connect(gain).connect(c.destination);osc.start(t);osc.stop(t+length+.02)}
 function kick(t,v){const c=audio(),osc=c.createOscillator(),g=c.createGain();osc.type='sine';osc.frequency.setValueAtTime(140,t);osc.frequency.exponentialRampToValueAtTime(42,t+.14);g.gain.setValueAtTime(Math.max(.001,v*.65),t);g.gain.exponentialRampToValueAtTime(.001,t+.25);osc.connect(g).connect(c.destination);osc.start(t);osc.stop(t+.27)}
 function noise(t,len,vol,highpass){const c=audio(),count=Math.max(1,Math.floor(c.sampleRate*len)),buf=c.createBuffer(1,count,c.sampleRate),data=buf.getChannelData(0);for(let i=0;i<count;i++)data[i]=(Math.random()*2-1)*(1-i/count);const src=c.createBufferSource(),filter=c.createBiquadFilter(),g=c.createGain();buf.copyToChannel(data,0);src.buffer=buf;filter.type='highpass';filter.frequency.value=highpass;g.gain.setValueAtTime(Math.max(.001,vol),t);g.gain.exponentialRampToValueAtTime(.001,t+len);src.connect(filter).connect(g).connect(c.destination);src.start(t);src.stop(t+len)}
-function playStep(step,t){for(let r=0;r<instruments.length;r++){const value=state.grid[r][step];if(!value||state.mute[r]||state.vol[r]===0)continue;const v=state.vol[r];if(r===0)kick(t,v);else if(r===1)noise(t,.17,v*.45,950);else if(r===2)noise(t,.065,v*.21,6500);else if(r===3)voice(noteFor(r,value-1),t,.28,'sawtooth',v*.17);else if(r===4)eventNotes(r,value-1).forEach(n=>voice(n,t,.38,'triangle',v*.075));else voice(noteFor(r,value-1),t,.16,'square',v*.12)}}
+function playStep(step,t){for(let r=0;r<instruments.length;r++){const value=state.grid[r][step];if(!value||state.mute[r]||state.vol[r]===0)continue;const v=state.vol[r];if(r===0)kick(t,v);else if(r===1)noise(t,.17,v*.45,950);else if(r===2)noise(t,.065,v*.21,6500);else if(r===3)voice(noteFor(r,value-1),t,.28,'sawtooth',v*.17);else if(r===4)eventNotes(r,value-1).forEach(n=>voice(n,t,.38,'triangle',v*.075));else {const note=noteFor(r,value-1);voice(note,t,.18,'triangle',v*.16);if(state.echo>0){voice(note,t+60/state.bpm/8,.16,'sine',v*.16*state.echo/100)}}}}
 let timer=null,nextTime=0,nextStep=0,displayStep=-1;
 function schedule(){const c=audio();while(nextTime<c.currentTime+.10){playStep(nextStep,nextTime);displayStep=nextStep;nextStep=(nextStep+1)%steps;nextTime+=60/state.bpm/4}$('#position').textContent=String(displayStep+1).padStart(2,'0')+' / 16';seq.querySelectorAll('.step').forEach(b=>b.classList.toggle('playhead',Number(b.dataset.col)===displayStep))}
 function stop(){if(timer!==null)clearInterval(timer);timer=null;$('#play').disabled=false;$('#position').textContent='01 / 16';seq.querySelectorAll('.step').forEach(b=>b.classList.remove('playhead'))}
