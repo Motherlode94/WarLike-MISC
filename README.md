@@ -2,7 +2,7 @@
 
 Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 
-## Version 0.2 — académie et laboratoire interactifs
+## Version 0.3 — académie, laboratoire et coach instrumental
 
 - **Piano** : 2 octaves jouables au clic, au toucher ou au clavier, timbres synthétiques Web Audio.
 - **Guitare** : manche jouable en accordage standard E A D G B E, de la corde à vide à la 12e case.
@@ -18,6 +18,23 @@ Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 - **Entraînement de l'oreille** : reconnaissance de notes naturelles ou chromatiques, score et précision en local.
 - **Précision rythmique** : exercice avec clics à 60–140 BPM, touches ou écran tactile, mesure de l'erreur moyenne en millisecondes.
 - Accès depuis le menu de `index.html` ; aucune bibliothèque externe requise.
+
+## Nouveau : coach instrumental (`coach.html`)
+
+- **7 exercices de notes** : premiers pas au piano, gamme et arpège, cordes de guitare, gamme de Mi mineur, basse et chromatisme.
+- **Microphone** : analyse monophonique en local par différence normalisée de type YIN, estimation de note, cents et indication de justesse.
+- **Clavier MIDI** : accès Web MIDI sur navigateur compatible, sélection du port et lecture des messages note-on.
+- **Évaluation** : comparaison de la suite attendue, progression et erreurs, sauvegarde des exercices terminés sur l'appareil.
+- **Démonstration** : les exercices peuvent être testés sans instrument avec un bouton de note virtuelle.
+- **Confidentialité** : le flux audio n'est pas envoyé au serveur ; le navigateur demande les autorisations d'accès.
+
+### Limites du coach
+
+- La détection par microphone est expérimentale et monophonique ; le bruit et les harmoniques peuvent donner des notes erronées.
+- L'écoute ne vérifie pas encore les accords complets, les attaques, les nuances, la posture, ni le tempo de chaque note.
+- Un instrument MIDI doit être relié à un navigateur qui supporte Web MIDI.
+- Le coach ne prétend pas remplacer un professeur : la notation reste limitée à la justesse et l'ordre des notes.
+- Les notes basses, particulièrement la corde Mi1 de basse (41,2 Hz), ne sont pas couvertes par la plage actuelle du microphone ; utiliser MIDI pour cet exercice.
 
 ## Démarrer
 
