@@ -48,6 +48,16 @@ Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 
 L'export MIDI transporte des notes, des canaux et le tempo, pas les sons Web Audio ni les réglages de volume du mixage.
 
+## Melody Boost — Beat Lab 0.5
+
+- Génération de motifs mélodiques originaux avec quatre ambiances : sombre, éthérée, mélancolique, tension/énergie.
+- Choix de densité (aérée, équilibrée, rapide), variation mélodique et registre du lead (−12, 0, +12 demi-tons).
+- Génération optionnelle d'un accompagnement basse et accords sur la grille existante.
+- Préécoute du lead et écho synthétique réglable (effet audio uniquement, non exporté en MIDI).
+- Les notes et patterns restent modifiables manuellement ; projet sauvegardé localement.
+
+Le générateur est algorithmique et utilise une seule mesure de 16 pas, non une imitation exacte d'un artiste ou d'une chanson.
+
 ## Démarrer
 
 Ouvrir `index.html` dans un navigateur moderne. Le piano, la guitare et le métronome fonctionnent en local. Pour le microphone, servir le projet en **HTTPS** ou sur `localhost`.
