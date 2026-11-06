@@ -36,6 +36,18 @@ Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 - Le coach ne prétend pas remplacer un professeur : la notation reste limitée à la justesse et l'ordre des notes.
 - Les notes basses, particulièrement la corde Mi1 de basse (41,2 Hz), ne sont pas couvertes par la plage actuelle du microphone ; utiliser MIDI pour cet exercice.
 
+## Nouveau : Beat Lab (`beat-lab.html`)
+
+- Séquenceur **16 pas**, boucle d'une mesure en 4/4.
+- Six pistes : grosse caisse, caisse claire, charleston, basse, accords et mélodie.
+- Sons Web Audio synthétiques, lecteur en boucle et mixage local (volume/mute).
+- Tonalité (12 notes) et gamme majeure/mineure ; composition par degrés de gamme.
+- Démo préprogrammée et progression pour apprendre la construction d'un groove.
+- Sauvegarde automatique dans le navigateur et nom de projet modifiable.
+- **Export MIDI standard format 1**, sept pistes au total (une tempo + six instruments), sans serveur.
+
+L'export MIDI transporte des notes, des canaux et le tempo, pas les sons Web Audio ni les réglages de volume du mixage.
+
 ## Démarrer
 
 Ouvrir `index.html` dans un navigateur moderne. Le piano, la guitare et le métronome fonctionnent en local. Pour le microphone, servir le projet en **HTTPS** ou sur `localhost`.
