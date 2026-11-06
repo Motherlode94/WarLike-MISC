@@ -2,7 +2,7 @@
 
 Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 
-## Version 0.1 — prototype interactif
+## Version 0.2 — académie et laboratoire interactifs
 
 - **Piano** : 2 octaves jouables au clic, au toucher ou au clavier, timbres synthétiques Web Audio.
 - **Guitare** : manche jouable en accordage standard E A D G B E, de la corde à vide à la 12e case.
@@ -10,6 +10,14 @@ Une application web d'apprentissage instrumental pour l'écosystème WarLike.
 - **Accordeur** : détection de hauteur monophonique par autocorrélation via microphone, indication en cents.
 - **Métronome** : 40–220 BPM, mesures 2/4, 3/4, 4/4, accent sur le premier temps.
 - **Interface responsive** : ordinateur et mobile, sans dépendance externe.
+
+## Nouveau : laboratoire musical (`practice.html`)
+
+- **Explorateur de gammes** : majeure, mineure naturelle et pentatonique mineure, 12 tonalités.
+- **Explorateur d'accords** : majeur, mineur, dominante 7, majeur 7, mineur 7, écoute séquentielle ou simultanée.
+- **Entraînement de l'oreille** : reconnaissance de notes naturelles ou chromatiques, score et précision en local.
+- **Précision rythmique** : exercice avec clics à 60–140 BPM, touches ou écran tactile, mesure de l'erreur moyenne en millisecondes.
+- Accès depuis le menu de `index.html` ; aucune bibliothèque externe requise.
 
 ## Démarrer
 
