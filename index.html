@@ -69,4 +69,4 @@ async function startMic(){try{if(!navigator.mediaDevices?.getUserMedia)throw Err
 function stopMic(){if(micFrame)cancelAnimationFrame(micFrame);micFrame=null;if(micSource)micSource.disconnect();micSource=null;analyser=null;if(micStream)micStream.getTracks().forEach(t=>t.stop());micStream=null;$('#toggle-mic').textContent='Activer le microphone'}
 $('#toggle-mic').onclick=()=>micStream?stopMic():startMic();
 window.addEventListener('pagehide',()=>{stopMic();stopMetro()});
-</script></body></html>
+</script><a href="./extensions.html" style="position:fixed;right:15px;bottom:15px;z-index:100;padding:12px 16px;border-radius:12px;background:#302a55;color:white;text-decoration:none;border:1px solid #7c6acf;font:14px system-ui">Extensions</a></body></html>
